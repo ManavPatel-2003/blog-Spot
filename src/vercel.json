@@ -4,8 +4,28 @@
 	},
 	"rewrites": [
 		{
-			"source": "/(.*)",
-			"destination": "/(.*)"
+			"source": "/",
+			"destination": "/"
+		},
+		{
+			"source": "/login",
+			"destination": "/login"
+		},
+		{
+			"source": "/signup",
+			"destination": "/signup"
+		},
+		{
+			"source": "/all-posts",
+			"destination": "/all-posts"
+		},
+		{
+			"source": "/add-post",
+			"destination": "/add-post"
+		},
+		{
+			"source": "/my-post",
+			"destination": "/my-post"
 		}
 	]
 }
