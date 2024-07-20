@@ -24,38 +24,45 @@ function PostForm({post}) {
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
-
+        setLoading(true)
         if (post) {
             const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
             if (file) {
-                appwriteService.deleteFile(post.featuredImage);
+                // console.log("delete")
+                appwriteService.deleteFile(post.featuredImage).then( () => {
+                    navigate('/my-posts')
+                });
             }
 
             const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
                 featuredImage: file ? file.$id : undefined,
+            }).then( ()=> {
+                setLoading(false);
+                navigate('/my-posts')
             });
 
-            if (dbPost) {
-                navigate(`/post/${dbPost.$id}`);
-            }
+            // if (dbPost) {
+            //     navigate(`/post/${dbPost.$id}`);
+            // }
         } else {
-            setLoading(true)
-            const file = await appwriteService.uploadFile(data.image[0]).then( () => setLoading(false));
-
+            const file = await appwriteService.uploadFile(data.image[0]);
             if (file) {
-                console.log(userData)
+                // console.log("Hello")
+                // console.log(userData)
                 const fileId = file.$id;
                 data.featuredImage = fileId;
-                setLoading(true)
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id, userName: userData.name }).then( () => setLoading(false));
+                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id, userName: userData.name }).then( () => {
+                    setLoading(false)
+                    navigate(`/my-posts`)    
+            });
+            // navigate(`/post/${dbPost.$id}`);
                 
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
-                }
+                
             }
         }
+        setLoading(false)
     };
 
     const slugTransform = useCallback((value) => {
@@ -130,7 +137,7 @@ function PostForm({post}) {
                 />
                 {post && (
                     <div className="w-full mb-4">
-                        {console.log(post)}
+                        {/* {console.log(post)} */}
                         <img
                             src={appwriteService.getFilePreview(post.featuredImage)}
                             alt={post.title}

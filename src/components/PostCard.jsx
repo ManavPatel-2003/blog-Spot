@@ -18,7 +18,7 @@ function PostCard({$id, content, $createdAt, title, featuredImage, userName}) {
   useEffect( ()=> {
     appwriteService.isLiked($id, userData.$id).then( (like) => {
       if(like){
-        console.log("Already liked")
+        // console.log("Already liked")
         setLike(true)
       }
       else{
@@ -26,17 +26,17 @@ function PostCard({$id, content, $createdAt, title, featuredImage, userName}) {
       }
     })
     appwriteService.getNumLikes($id).then( (numLikes) => setnumLikes(numLikes) )
-    console.log("now")
+    // console.log("now")
   }, [])
   
   function handleLike() {
     if(like===false){
-      console.log("df")
+      // console.log("df")
       setLike(true)
       appwriteService.addLike($id, userData.$id).then(
         () => {
           appwriteService.getNumLikes($id).then( (numLikes) => setnumLikes(numLikes) )
-          console.log("updated!!")
+          // console.log("updated!!")
         }
       );
       setTimeout( () => {
@@ -49,7 +49,7 @@ function PostCard({$id, content, $createdAt, title, featuredImage, userName}) {
       appwriteService.removeLike($id, userData.$id).then( 
         () => {
           appwriteService.getNumLikes($id).then( (numLikes) => setnumLikes(numLikes) )
-          console.log("updated!!")
+          // console.log("updated!!")
         }
       );
     }

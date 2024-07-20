@@ -27,7 +27,7 @@ function MyPosts() {
         () => {
             appwriteService.getPosts([Query.equal("status", "active"), Query.equal("userId", userData.$id)]).then( (posts) => {
                 if(posts){
-                    console.log(posts.documents)
+                    // console.log(posts.documents)
                     if(posts.documents.length==0){
                         setPosts(["no posts"])
                     }

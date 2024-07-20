@@ -14,7 +14,7 @@ export default function Post() {
 
     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
-    console.log(userData);
+    // console.log(userData);
     useEffect(() => {
         if (slug) {
             appwriteService.getPost(slug).then((post) => {
@@ -28,7 +28,7 @@ export default function Post() {
         appwriteService.deletePost(post.$id).then((status) => {
             if (status) {
                 appwriteService.deleteFile(post.featuredImage);
-                navigate("/");
+                navigate("/my-posts");
             }
         });
     };
