@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {Button, Input, Select, RTE} from "../index"
 import appwriteService from "../../appwrite/config"
@@ -6,8 +6,35 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import RequiredField from '../messages/RequiredField'
 import { Alert, Typography } from "@material-tailwind/react";
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import conf from '../../conf/conf'
 
 function PostForm({post}) {
+    const genAI = new GoogleGenerativeAI(conf.geminiapiKey);
+
+    const [title_ai, setTitleAI] = useState("")
+    const [content_ai, setContentai] = useState("")
+async function run() {
+
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+
+  const prompt = 'Suggest an start of an article in 10 - 20 words on title' + title_ai
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+    setContentai(text)
+}
+    // const genAi = new GoogleGenerativeAI("")
+    // const model = genAi.getGenerativeModel(
+    //     {
+    //         model: "gemini-1.5-flash"
+    //     }
+    // );  
+
+    //     const ans = model.generateContent("Top 10 countries")
+    //     console.log(ans)
+
     const [loading, setLoading] = useState(false)
     const {register, handleSubmit, watch, setValue, control, getValues, formState} = useForm({
         defaultValues: {
@@ -66,6 +93,8 @@ function PostForm({post}) {
     };
 
     const slugTransform = useCallback((value) => {
+        setTitleAI(value)
+        // console.log(title_ai)
         if (value && typeof value === "string")
             return value
                 .trim()
@@ -92,6 +121,7 @@ function PostForm({post}) {
             
             <div className="w-2/3 px-2">
                 <Input
+
                     label="Title :"
                     placeholder="Title"
                     className="mb-4"
@@ -103,13 +133,25 @@ function PostForm({post}) {
                         }
                         )
                     }
+
                 />
+                
+                <Button type="button" onClick = {run} className="w-full">
+                Get AI Suggestions
+                </Button>
                 {/* <Input
                     label="Caption :"
                     placeholder="Caption"
                     className="mb-4"
                     {...register("content", { required: true })}
                 /> */}
+                {content_ai.length ? <Input
+                    placeholder="AI suggestions"
+                    className="mb-4"
+                    value = {content_ai}
+                    disabled
+                />:<></>
+                }
                 <Input
                     placeholder="Slug"
                     disabled
@@ -117,14 +159,15 @@ function PostForm({post}) {
                     {...register("slug", { required: true })}
                     onInput={(e) => {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
+                        
                     }}
                     hidden
                 />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} 
+                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} content_ai={content_ai}
                 {...register("content", { required: {
                         value: true, 
                         message: "Content is required.",
-                    }, })}
+                    }})}
                 />
             </div>
             <div className="w-1/3 px-2">

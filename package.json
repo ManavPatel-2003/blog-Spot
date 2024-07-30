@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.16.0",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.4",
     "@material-tailwind/react": "^2.1.9",
